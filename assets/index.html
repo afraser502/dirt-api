@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>DIRT - Docker Image Retrieval Tool</title>
+</head>
+
+<body>
+  <h1>DIRT - Docker Image Retrieval Tool</h1>
+  <!-- 
+    This section of the document specifies the table that will
+    be used to display the list of images and their description
+   -->
+  <table>
+    <tr>
+      <th>Repository</th>
+      <th>ID</th>
+      <th>Tag</th>
+      <th>Size</th>
+      <th>Created</th>
+      <th>Requestor</th>
+      <th>Status</th>
+    </tr>
+    </tr>
+  </table>
+  <br/>
+
+  <!-- 
+    This section contains the form, that will be used to hit the 
+    `POST /bird` API that we will build in the next section
+   -->
+  <form action="/images" method="post">
+    Repository:
+    <input type="text" name="Repository">
+    <br/> ID:
+    <input type="text" name="ID">
+    <br/> Tag:
+    <input type="text" name="Tag">
+    <br/> Size:
+    <input type="text" name="Size">
+    <br/> Created:
+    <input type="text" name="Created">
+    <br/> Requestor:
+    <input type="text" name="Requestor">
+    <br/> Status:
+    <input type="text" name="Status">
+    <br/>
+    <input type="submit" value="Submit">
+  </form>
+
+  <!-- 
+    Finally, the last section is the script that will
+    run on each page load to fetch the list of birds
+    and add them to our existing table
+   -->
+  <script>
+    imageTable = document.querySelector("table")
+    /*
+    Use the browsers `fetch` API to make a GET call to /bird
+    We expect the response to be a JSON list of birds, of the
+    form :
+    [
+      {"species":"...","description":"..."},
+      {"species":"...","description":"..."}
+    ]
+    */
+    fetch("/images")
+      .then(response => response.json())
+      .then(imageList => {
+        //Once we fetch the list, we iterate over it
+        imageList.forEach(image => {
+          // Create the table row
+          row = document.createElement("tr")
+          // Create the table data elements for the species and description columns
+          Repository = document.createElement("td")
+          Repository.innerHTML = image.repository
+          ID = document.createElement("td")
+          ID.innerHTML = image.id
+          Tag = document.createElement("td")
+          Tag.innerHTML = image.tag
+          Size = document.createElement("td")
+          Size.innerHTML = image.size
+          Created = document.createElement("td")
+          Created.innerHTML = image.created
+          Requestor = document.createElement("td")
+          Requestor.innerHTML = image.requestor
+          Status = document.createElement("td")
+          Status.innerHTML = image.status
+
+          // Add the data elements to the row
+          row.appendChild(Repository)
+          row.appendChild(ID)
+          row.appendChild(Tag)
+          row.appendChild(Size)
+          row.appendChild(Created)
+          row.appendChild(Requestor)
+          row.appendChild(Status)
+
+          // Finally, add the row element to the table itself
+          imageTable.appendChild(row)
+        })
+      })
+  </script>
+</body>
+
+</html>
